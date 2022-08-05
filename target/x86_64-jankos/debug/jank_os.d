@@ -1,1 +1,1 @@
-/home/cbrisson/Projects/jank-os/target/x86_64-jankos/debug/jank_os: /home/cbrisson/Projects/jank-os/src/main.rs /home/cbrisson/Projects/jank-os/src/vga_buffer.rs
+/home/cbrisson/Projects/jank-os/target/x86_64-jankos/debug/jank_os: /home/cbrisson/Projects/jank-os/src/lib.rs /home/cbrisson/Projects/jank-os/src/main.rs /home/cbrisson/Projects/jank-os/src/serial.rs /home/cbrisson/Projects/jank-os/src/vga_buffer.rs

@@ -30,9 +30,12 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
 pub extern "C" fn _start() {
     println!("Hello world!");
 
+    jank_os::init();
+
     #[cfg(test)]
     test_main();
 
+    println!("We made it alive!");
     loop {}
 }
 

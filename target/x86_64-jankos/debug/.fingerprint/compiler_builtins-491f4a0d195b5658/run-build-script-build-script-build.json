@@ -1,1 +1,0 @@
-{"rustc":2428684771055970641,"features":"","target":0,"profile":0,"path":0,"deps":[[12877013871330122890,"build_script_build",false,5685711401410687126]],"local":[{"RerunIfChanged":{"output":"x86_64-jankos/debug/build/compiler_builtins-491f4a0d195b5658/output","paths":["build.rs"]}}],"rustflags":[],"metadata":0,"config":0,"compile_kind":0}

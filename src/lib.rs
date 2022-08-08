@@ -10,11 +10,15 @@
 pub mod serial;
 pub mod vga_buffer;
 pub mod interupts;
+pub mod gdt;
 
 use core::panic::PanicInfo;
 
 pub fn init() {
+    gdt::init();
     interupts::init_idt();
+    unsafe { interupts::PICS.lock().initialize() };
+    x86_64::instructions::interrupts::enable();
 }
 
 pub trait Testable {
@@ -44,22 +48,7 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
     serial_println!("[failed]\n");
     serial_println!("Error: {}\n", info);
     exit_qemu(QemuExitCode::Failed);
-    loop {}
-}
-
-/// Entry point for `cargo test`
-#[cfg(test)]
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
-    init();
-    test_main();
-    loop {}
-}
-
-#[cfg(test)]
-#[panic_handler]
-fn panic(info: &PanicInfo) -> ! {
-    test_panic_handler(info)
+    htl_loop()
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -76,4 +65,25 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
         let mut port = Port::new(0xf4);
         port.write(exit_code as u32);
     }
+}
+
+pub fn htl_loop() -> ! {
+    loop {
+        x86_64::instructions::hlt();
+    }
+}
+
+/// Entry point for `cargo test`
+#[cfg(test)]
+#[no_mangle]
+pub extern "C" fn _start() -> ! {
+    init();
+    test_main();
+    htl_loop();
+}
+
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    test_panic_handler(info)
 }

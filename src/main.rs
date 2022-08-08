@@ -5,8 +5,7 @@
 #![test_runner(jank_os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
-mod vga_buffer;
-mod serial;
+use jank_os::println;
 
 use core::panic::PanicInfo;
 
@@ -27,26 +26,34 @@ pub fn exit_qemu(exit_code: QemuExitCode) {
 }
 
 #[no_mangle]
-pub extern "C" fn _start() {
-    println!("Hello world!");
+pub extern "C" fn _start() -> ! {
+    println!("Hello World{}", "!");
 
     jank_os::init();
 
+    // as before
     #[cfg(test)]
     test_main();
 
-    println!("We made it alive!");
-    loop {}
+
+    println!("It did not crash!");
+    jank_os::htl_loop();
 }
 
 // Called on panic
+#[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    serial_println!("[failed]\n");
-    serial_println!("Error: {}\n", info);
-    exit_qemu(QemuExitCode::Failed);
-    loop{}
+    println!("{}", info);
+    jank_os::htl_loop();
 }
+
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    jank_os::test_panic_handler(info)
+}
+
 
 #[test_case]
 fn trivial_assertion() {
